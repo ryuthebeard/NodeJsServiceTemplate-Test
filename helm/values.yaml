@@ -1,22 +1,22 @@
-# Default values for nestjs.
+# Default values for springboot.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: devops
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: "devops"
+fullnameOverride: "devops"
 
 app:
-  name: nestjs-template
-  hostName: nestjs.dev.freebank.dev
+  name: devops
+  hostName: devops
   version: 0.1.0
   environment:
     enabled: true
@@ -24,37 +24,23 @@ app:
 
   secrets:
     enabled: true
-    nestjsEnv:
-      enabled: true
-      secretKeyRef: nestjs-env
-      mountPath: /etc/nestjs/.env
-      envPath: /etc/nestjs/.env/.env.test
-    cba:
-      enabled: false
-      secretKeyRef: nestjs-helloworld-datasource-properties
     datasource:
       enabled: false
-      secretKeyRef: nestjs-helloworld-datasource-properties
+      secretKeyRef: devops-datasource-properties
     kafka:
       enabled: false
-      secretKeyRef: nestjs-helloworld-kafka-properties
+      secretKeyRef: devops-kafka-properties
     redis:
       enabled: false
-      secretKeyRef: nestjs-helloworld-redis-properties
-    jwt:
-      enabled: false
-      secretKeyRef: nestjs-helloworld-jwt-properties
-    sentry:
-      enabled: false
-      secretKeyRef: nestjs-helloworld-sentry-properties
+      secretKeyRef: devops-redis-properties
 
 namespace:
   enabled: false
-  name: demo
+  name: devops
 
 cloudSqlProxy:
   enabled: true
-  image: eu.gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.1.0
+  image: eu.gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.0.0
   #  Next value if replaced in Cloud Build and value comes from Secret manager.
   #  Please do not modify value CLOUD_SQL_PROXY_INSTANCES_CONFIG otherwise the replacement will fail and database connectivity will be fail.
   instances: "CLOUD_SQL_PROXY_INSTANCES_CONFIG"
@@ -78,9 +64,9 @@ multiClusterIngress:
 datadog:
   enabled: true
   apiKey: 123
-  tags: type:api,framework:nestjs,language:javascript
-  source: nestjs
-  service: nestjs-template
+  tags: type:api,framework:springboot,language:java
+  source: java
+  service: devops
   logsInjectionEnabled: true
   profilingEnabled: true
   appsecEnabled: false
@@ -95,7 +81,7 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: "gsa-wi"
 
-podAnnotations: {}  
+podAnnotations: {}
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -110,7 +96,7 @@ securityContext:
 
 service:
   type: ClusterIP
-  port: 5000
+  port: 8080
   exposeport: 80
 
 ingress:
@@ -121,14 +107,14 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/proxy-body-size: 100m
   hosts:
-    - host: nestjs.dev.freebank.dev
+    - host: devops
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls:
-    - secretName: nestjs-hello-demo-tls
+    - secretName: devops-tls
       hosts:
-        - nestjs.dev.freebank.dev
+        - devops
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
